@@ -1,0 +1,94 @@
+ABOUT:
+------
+ngx_slowfs_cache is a module which allows caching of static files
+(served using "root" directive). This enables one to create
+fast caches for files stored on slow filesystems, for example:
+- storage: network disks, cache: local disks,
+- storage: 7,2K SATA drives, cache: 15K SAS drives in RAID0.
+
+This module also contains "cache_purge" functionality, previously
+developed for yo.se.
+
+
+SPONSORS:
+---------
+ngx_slowfs_cache-1.0 was fully funded by c2hosting.com.
+
+
+CONFIGURATION NOTES:
+--------------------
+"slowfs_cache_path" and "slowfs_temp_path" values should point to
+the same filesystem, otherwise files will be copied twice.
+
+ngx_slowfs_cache-1.0 doesn't work with AIO enabled.
+
+
+CONFIGURATION DIRECTIVES:
+-------------------------
+
+  slowfs_cache zone_name (context: http, server, location) 
+  --------------------------------------------------------
+  Sets area used for caching (previously definied using slowfs_cache_path).
+  
+  slowfs_cache_key key (context: http, server, location) 
+  ------------------------------------------------------
+  Sets key for caching.
+
+  slowfs_cache_purge zone_name key (context: location)
+  ----------------------------------------------------
+  Sets area and key used for purging selected pages from cache.
+
+  slowfs_cache_path path [levels] keys_zone=zone_name:zone_size [inactive] [max_size] (context: http)
+  ---------------------------------------------------------------------------------------------------
+  Sets cache area and its structure.
+  
+  slowfs_temp_path path [level1] [level2] [level3] (context: http)
+  ----------------------------------------------------------------
+  Sets temporary area where files are stored before they are moved to cache area.
+  Default: "/tmp 1 2"
+
+  slowfs_cache_min_uses number (context: http, server, location) 
+  --------------------------------------------------------------
+  Sets number of uses after which file is copied to cache.
+  Default: "1"
+
+  slowfs_cache_valid [reply_code] time (context: http, server, location) 
+  ----------------------------------------------------------------------
+  Sets time for which file will be served from cache.
+
+  slowfs_big_file_size size (context: http, server, location) 
+  -----------------------------------------------------------
+  Sets minimum file size for "big" files. Worker processes fork() before
+  they start copying "big" files to avoid any service disruption. 
+  Default: "128k"
+
+
+CONFIGURATION VARIABLES:
+------------------------
+  $slowfs_cache_status
+  --------------------
+  Represents availability of cached file.
+  Possible values are: MISS, HIT and EXPIRED.
+
+
+EXAMPLE CONFIGURATION:
+----------------------
+http {
+    slowfs_cache_path  /tmp/cache levels=1:2 keys_zone=fastcache:10m;
+    slowfs_temp_path   /tmp/temp 1 2;
+
+    server {
+        location / {
+            root                /var/www;
+            slowfs_cache        fastcache;
+            slowfs_cache_key    $uri;
+            slowfs_cache_valid  1d;
+        }
+
+        location ~ /purge(/.*) {
+            allow               127.0.0.1;
+            deny                all;
+            slowfs_cache_purge  fastcache $1;
+        }
+    }
+}
