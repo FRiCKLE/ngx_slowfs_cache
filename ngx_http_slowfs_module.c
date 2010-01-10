@@ -224,7 +224,9 @@ ngx_http_slowfs_static_send(ngx_http_request_t *r)
 
     ngx_memzero(&of, sizeof(ngx_open_file_info_t));
 
+#if (nginx_version >= 8018)
     of.read_ahead = clcf->read_ahead;
+#endif
     of.directio = clcf->directio;
     of.valid = clcf->open_file_cache_valid;
     of.min_uses = clcf->open_file_cache_min_uses;
