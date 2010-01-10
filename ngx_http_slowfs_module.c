@@ -352,11 +352,17 @@ ngx_http_slowfs_static_send(ngx_http_request_t *r)
     slowcf = ngx_http_get_module_loc_conf(r, ngx_http_slowfs_module);
     valid = ngx_http_file_cache_valid(slowcf->cache_valid, 200);
 
+    /* Don't cache content that instantly expires. */
+    if (valid
+#if (nginx_version < 8031)
     /*
-     * Don't cache content that instantly expires.
-     * Don't cache empty files (bug: nginx can't serve them from cache).
+     * Don't cache 0 byte files, because nginx doesn't flush response
+     * while serving them from cache and client timeouts.
+     * This has been fixed in nginx-0.8.31.
      */
-    if (valid && of.size) {
+       && of.size
+#endif
+    ) {
         c = r->cache;
 
         ngx_shmtx_lock(&c->file_cache->shpool->mutex);
