@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009, FRiCKLE Piotr Sikora <info@frickle.com>
+ * Copyright (c) 2009-2010, FRiCKLE Piotr Sikora <info@frickle.com>
  * All rights reserved.
  *
  * This project was fully funded by c2hosting.com.
@@ -369,7 +369,7 @@ ngx_http_slowfs_static_send(ngx_http_request_t *r)
         if (c->node->uses >= c->min_uses && !c->node->updating) {
             ngx_shmtx_unlock(&c->file_cache->shpool->mutex);
 
-            if (of.size < slowcf->big_file_size) {
+            if ((size_t) of.size < slowcf->big_file_size) {
                 /*
                  * Small files:
                  * - copy file to the cache in worker process,

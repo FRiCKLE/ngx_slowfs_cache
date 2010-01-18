@@ -1,3 +1,8 @@
+2010-01-18    VERSION 1.3
+    * Add missing cast, apparently some systems had trouble
+      building module without this.
+      Reported by Serhan Sevim.
+
 2009-12-29    VERSION 1.2
     * Enable caching of 0 byte files in nginx-0.8.31+.
 
