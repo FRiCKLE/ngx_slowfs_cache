@@ -224,7 +224,7 @@ ngx_http_slowfs_static_send(ngx_http_request_t *r)
 
     ngx_memzero(&of, sizeof(ngx_open_file_info_t));
 
-#if (nginx_version >= 8018)
+#if defined(nginx_version) && (nginx_version >= 8018)
     of.read_ahead = clcf->read_ahead;
 #endif
     of.directio = clcf->directio;
@@ -324,7 +324,7 @@ ngx_http_slowfs_static_send(ngx_http_request_t *r)
 #if !(NGX_WIN32) /* the not regular files are probably Unix specific */
 
     if (!of.is_file) {
-        ngx_log_error(NGX_LOG_CRIT, log, ngx_errno,
+        ngx_log_error(NGX_LOG_CRIT, log, 0,
                       "\"%s\" is not a regular file", path.data);
 
         return NGX_HTTP_NOT_FOUND;
@@ -354,7 +354,7 @@ ngx_http_slowfs_static_send(ngx_http_request_t *r)
 
     /* Don't cache content that instantly expires. */
     if (valid
-#if (nginx_version < 8031)
+#if defined(nginx_version) && (nginx_version < 8031)
     /*
      * Don't cache 0 byte files, because nginx doesn't flush response
      * while serving them from cache and client timeouts.
@@ -809,9 +809,11 @@ ngx_http_slowfs_handler(ngx_http_request_t *r)
         return NGX_DECLINED;
     }
 
+#if defined(nginx_version) && (nginx_version < 8038)
     if (r->zero_in_uri) {
         return NGX_DECLINED;
     }
+#endif
 
     slowcf = ngx_http_get_module_loc_conf(r, ngx_http_slowfs_module);
     if (!slowcf->enabled) {
