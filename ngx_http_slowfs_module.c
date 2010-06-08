@@ -811,7 +811,7 @@ ngx_http_slowfs_handler(ngx_http_request_t *r)
 
 #if defined(nginx_version) \
     && ((nginx_version < 7066) \
-        || ((nginx_version > 8000) && (nginx_version < 8038)))
+        || ((nginx_version >= 8000) && (nginx_version < 8038)))
     if (r->zero_in_uri) {
         return NGX_DECLINED;
     }
