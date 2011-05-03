@@ -775,7 +775,11 @@ ngx_http_slowfs_cache_purge(ngx_http_request_t *r, ngx_http_file_cache_t *cache,
         return NGX_DECLINED;
     }
 
+#if defined(nginx_version) && (nginx_version >= 1000001)
+    cache->sh->size -= c->node->fs_size;
+#else
     cache->sh->size -= (c->node->length + cache->bsize - 1) / cache->bsize;
+#endif
 
     c->node->exists = 0;
     c->node->updating = 0;
