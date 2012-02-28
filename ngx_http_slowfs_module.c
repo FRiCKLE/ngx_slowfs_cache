@@ -865,10 +865,6 @@ ngx_http_slowfs_cache_purge_handler(ngx_http_request_t *r)
     ngx_int_t                    rc;
     size_t                       len;
 
-    if (!(r->method & (NGX_HTTP_GET|NGX_HTTP_HEAD|NGX_HTTP_DELETE))) {
-        return NGX_HTTP_NOT_ALLOWED;
-    }
-
     slowcf = ngx_http_get_module_loc_conf(r, ngx_http_slowfs_module);
 
     rc = ngx_http_slowfs_cache_purge(r, slowcf->cache->data,
