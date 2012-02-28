@@ -188,7 +188,7 @@ ngx_module_t  ngx_http_slowfs_module = {
 ngx_int_t
 ngx_http_slowfs_static_send(ngx_http_request_t *r)
 {
-    u_char                      *last, *location;
+    u_char                      *last, *location, *procname;
     size_t                       root, len;
     ngx_str_t                    path;
     ngx_int_t                    rc;
@@ -417,7 +417,16 @@ ngx_http_slowfs_static_send(ngx_http_request_t *r)
                 break;
                 case 0: /* child */
                     ngx_pid = ngx_getpid();
-                    ngx_setproctitle(SLOWFS_PROCESS_NAME);
+
+                    procname = ngx_pnalloc(r->pool, 300);
+                    if (procname == NULL) {
+                        return NGX_HTTP_INTERNAL_SERVER_ERROR;
+                    }
+
+                    ngx_snprintf(procname, 300, "%s: %V%Z", SLOWFS_PROCESS_NAME,
+                                 &path);
+
+                    ngx_setproctitle((char *) procname);
 
                     /*
                      * We've spawned new child, so we need to increment counter,
