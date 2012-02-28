@@ -418,13 +418,14 @@ ngx_http_slowfs_static_send(ngx_http_request_t *r)
                 case 0: /* child */
                     ngx_pid = ngx_getpid();
 
-                    procname = ngx_pnalloc(r->pool, 300);
+                    procname = ngx_pnalloc(r->pool, 301);
                     if (procname == NULL) {
                         return NGX_HTTP_INTERNAL_SERVER_ERROR;
                     }
 
-                    ngx_snprintf(procname, 300, "%s: %V%Z", SLOWFS_PROCESS_NAME,
-                                 &path);
+                    last = ngx_snprintf(procname, 300, "%s: %V",
+                                        SLOWFS_PROCESS_NAME, &path);
+                    *last = '\0';
 
                     ngx_setproctitle((char *) procname);
 
