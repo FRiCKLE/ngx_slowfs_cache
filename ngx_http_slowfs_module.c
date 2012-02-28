@@ -752,6 +752,11 @@ ngx_http_slowfs_cache_purge(ngx_http_request_t *r, ngx_http_file_cache_t *cache,
     ngx_http_file_cache_create_key(r);
 
     rc = ngx_http_file_cache_open(r);
+
+    ngx_log_debug2(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
+                   "http file cache purge: %i, \"%s\"",
+                   rc, c->file.name.data);
+
     if (rc == NGX_HTTP_CACHE_UPDATING || rc == NGX_HTTP_CACHE_STALE) {
         rc = NGX_OK;
     }
@@ -787,9 +792,6 @@ ngx_http_slowfs_cache_purge(ngx_http_request_t *r, ngx_http_file_cache_t *cache,
     c->node->updating = 0;
 
     ngx_shmtx_unlock(&cache->shpool->mutex);
-
-    ngx_log_debug1(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
-                   "http file cache purge: \"%s\"", c->file.name.data);
 
     if (ngx_delete_file(c->file.name.data) == NGX_FILE_ERROR) {
         /* entry in error log is enough, don't notice client */
