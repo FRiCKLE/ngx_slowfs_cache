@@ -1,3 +1,10 @@
+2012-02-28    VERSION 1.8
+    * Fix setting of slowfs process title.
+      In case when local path was over 277 characters long, slowfs
+      process would crash, which would result in file not being
+      copied to the cache.
+      Bug had appeared in version 1.7.
+
 2012-02-28    VERSION 1.7
     * Fix on-disk cache size calculation.
       Since the initial release, recorded on-disk cache size was
