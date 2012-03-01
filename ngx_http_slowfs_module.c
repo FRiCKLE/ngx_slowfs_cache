@@ -418,13 +418,16 @@ ngx_http_slowfs_static_send(ngx_http_request_t *r)
                 case 0: /* child */
                     ngx_pid = ngx_getpid();
 
-                    procname = ngx_pnalloc(r->pool, 301);
+                    len = sizeof(SLOWFS_PROCESS_NAME) - 1 + sizeof(":  to ") - 1
+                          + path.len + c->file.name.len;
+
+                    procname = ngx_pnalloc(r->pool, len + 1);
                     if (procname == NULL) {
                         return NGX_HTTP_INTERNAL_SERVER_ERROR;
                     }
 
-                    last = ngx_snprintf(procname, 300, "%s: %V",
-                                        SLOWFS_PROCESS_NAME, &path);
+                    last = ngx_snprintf(procname, len, SLOWFS_PROCESS_NAME
+                                        ": %V to %V", &path, &c->file.name);
                     *last = '\0';
 
                     ngx_setproctitle((char *) procname);
