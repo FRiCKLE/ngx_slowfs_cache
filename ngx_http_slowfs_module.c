@@ -432,20 +432,13 @@ ngx_http_slowfs_static_send(ngx_http_request_t *r)
 
                     ngx_setproctitle((char *) procname);
 
-                    /*
-                     * We've spawned new child, so we need to increment counter,
-                     * otherwise it would be incremented once (before the spawn)
-                     * and decremented twice (in parent and child processes).
-                     */
-                    ngx_shmtx_lock(&c->file_cache->shpool->mutex);
-                    c->node->count++;
-                    ngx_shmtx_unlock(&c->file_cache->shpool->mutex);
-
                     ngx_http_slowfs_cache_update(r, &of, &path);
 
                     exit(0);
                     break;
                 default: /* parent */
+                    c->node = NULL;
+                    c->updated = 1;
                     break;
                 }
             }
