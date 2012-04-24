@@ -548,6 +548,7 @@ skip_alloc:
              */
             ngx_shmtx_lock(&c->file_cache->shpool->mutex);
             c->node->updating = 0;
+            c->updating = 0;
             ngx_shmtx_unlock(&c->file_cache->shpool->mutex);
 
             slowctx->cache_status = NGX_HTTP_CACHE_EXPIRED;
@@ -595,11 +596,13 @@ ngx_http_slowfs_cache_update(ngx_http_request_t *r, ngx_open_file_info_t *of,
 
     if (c->node->updating) {
         /* race between concurrent processes, backoff */
+        c->node->count--;
         ngx_shmtx_unlock(&c->file_cache->shpool->mutex);
         return;
     }
 
     c->node->updating = 1;
+    c->updating = 1;
 
     ngx_shmtx_unlock(&c->file_cache->shpool->mutex);
 
@@ -611,13 +614,13 @@ ngx_http_slowfs_cache_update(ngx_http_request_t *r, ngx_open_file_info_t *of,
 
     len = 8 * ngx_pagesize;
 
-    buf = ngx_palloc(r->pool, len);
-    if (buf == NULL) {
+    tf = ngx_pcalloc(r->pool, sizeof(ngx_temp_file_t));
+    if (tf == NULL) {
         goto failed;
     }
 
-    tf = ngx_pcalloc(r->pool, sizeof(ngx_temp_file_t));
-    if (tf == NULL) {
+    buf = ngx_palloc(r->pool, len);
+    if (buf == NULL) {
         goto failed;
     }
 
@@ -708,12 +711,11 @@ ngx_http_slowfs_cache_update(ngx_http_request_t *r, ngx_open_file_info_t *of,
     return;
 
 failed:
-    ngx_shmtx_lock(&c->file_cache->shpool->mutex);
-    c->node->updating = 0;
-    ngx_shmtx_unlock(&c->file_cache->shpool->mutex);
-
     ngx_log_error(NGX_LOG_ALERT, r->connection->log, ngx_errno,
                   "http file cache copy: \"%s\" failed", path->data);
+
+    ngx_http_file_cache_free(c, tf);
+
     return;
 }
 
@@ -798,6 +800,7 @@ ngx_http_slowfs_cache_purge(ngx_http_request_t *r, ngx_http_file_cache_t *cache,
 
     c->node->exists = 0;
     c->node->updating = 0;
+    c->updating = 0;
 
     ngx_shmtx_unlock(&cache->shpool->mutex);
 
