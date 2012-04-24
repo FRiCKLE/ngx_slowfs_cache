@@ -154,9 +154,9 @@ You can test it by running:
 
 License
 =======
-    Copyright (c) 2009-2011, FRiCKLE <info@frickle.com>
-    Copyright (c) 2009-2011, Piotr Sikora <piotr.sikora@frickle.com>
-    Copyrithg (c) 2002-2011, Igor Sysoev
+    Copyright (c) 2009-2012, FRiCKLE <info@frickle.com>
+    Copyright (c) 2009-2012, Piotr Sikora <piotr.sikora@frickle.com>
+    Copyrithg (c) 2002-2012, Igor Sysoev <igor@sysoev.ru>
     All rights reserved.
 
     This project was fully funded by c2hosting.com.

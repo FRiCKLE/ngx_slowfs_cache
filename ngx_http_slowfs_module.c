@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2009-2011, FRiCKLE <info@frickle.com>
- * Copyright (c) 2009-2011, Piotr Sikora <piotr.sikora@frickle.com>
- * Copyrithg (c) 2002-2011, Igor Sysoev
+ * Copyright (c) 2009-2012, FRiCKLE <info@frickle.com>
+ * Copyright (c) 2009-2012, Piotr Sikora <piotr.sikora@frickle.com>
+ * Copyrithg (c) 2002-2011, Igor Sysoev <igor@sysoev.ru>
  * All rights reserved.
  *
  * This project was fully funded by c2hosting.com.
@@ -16,11 +16,11 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY FRiCKLE PIOTR SIKORA AND CONTRIBUTORS
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL FRiCKLE PIOTR
- * SIKORA OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * HOLDERS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
  * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
  * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
  * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
