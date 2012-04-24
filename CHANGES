@@ -1,3 +1,8 @@
+2012-04-24    VERSION 1.9
+    * Fix issue in which "copy once" fail-safe would be removed
+      if (misbehaving) client would disconnect before cache update
+      of an expired file was completed.
+
 2012-02-28    VERSION 1.8
     * Fix setting of slowfs process title.
       In case when local path was over 277 characters long, slowfs
