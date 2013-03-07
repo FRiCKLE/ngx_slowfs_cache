@@ -1,3 +1,12 @@
+2013-03-07    VERSION 1.10
+    * Fix compatibility with nginx-1.1.12+.
+      Due to the changes in cache index usage accounting (1 per request
+      instead of 1 per access) initial cache insert of "small" file was
+      decreasing usage count, rendering index entry invalid.
+      Because cache manager ignores invalid entries, expired cache files
+      were not being removed from the cache, which forced it to outgrow
+      specified "max_size" value.
+
 2012-04-24    VERSION 1.9
     * Fix issue in which "copy once" fail-safe would be removed
       if (misbehaving) client would disconnect before cache update
