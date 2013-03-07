@@ -384,6 +384,12 @@ ngx_http_slowfs_static_send(ngx_http_request_t *r)
                 old_status = slowctx->cache_status;
 #endif
 
+#if defined(nginx_version) && (nginx_version >= 1001012)
+                ngx_shmtx_lock(&c->file_cache->shpool->mutex);
+                c->node->count++;
+                ngx_shmtx_unlock(&c->file_cache->shpool->mutex);
+#endif
+
                 ngx_http_slowfs_cache_update(r, &of, &path);
                 /* Allow cache_cleanup after cache_update. */
                 c->updated = 0;
