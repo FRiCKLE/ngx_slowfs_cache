@@ -200,9 +200,11 @@ ngx_http_slowfs_static_send(ngx_http_request_t *r)
     ngx_http_core_loc_conf_t    *clcf;
     /* slowfs */
     ngx_http_slowfs_loc_conf_t  *slowcf;
+#if defined(nginx_version) && (nginx_version < 8048)
     ngx_http_slowfs_ctx_t       *slowctx;
-    ngx_http_cache_t            *c;
     ngx_uint_t                   old_status;
+#endif
+    ngx_http_cache_t            *c;
     time_t                       valid;
 
     log = r->connection->log;
@@ -377,13 +379,16 @@ ngx_http_slowfs_static_send(ngx_http_request_t *r)
                  * - copy file to the cache in worker process,
                  * - send file to current client from the cache.
                  */
+#if defined(nginx_version) && (nginx_version < 8048)
                 slowctx = ngx_http_get_module_ctx(r, ngx_http_slowfs_module);
                 old_status = slowctx->cache_status;
+#endif
 
                 ngx_http_slowfs_cache_update(r, &of, &path);
                 /* Allow cache_cleanup after cache_update. */
                 c->updated = 0;
 
+#if defined(nginx_version) && (nginx_version < 8048)
                 if (old_status == NGX_HTTP_CACHE_EXPIRED) {
                     /*
                      * Expired cached files don't increment counter,
@@ -393,9 +398,13 @@ ngx_http_slowfs_static_send(ngx_http_request_t *r)
                     c->node->count++;
                     ngx_shmtx_unlock(&c->file_cache->shpool->mutex);
                 }
+#endif
 
                 rc = ngx_http_slowfs_cache_send(r);
+
+#if defined(nginx_version) && (nginx_version < 8048)
                 slowctx->cache_status = old_status;
+#endif
 
                 if (rc != NGX_DECLINED) {
                     return rc;
